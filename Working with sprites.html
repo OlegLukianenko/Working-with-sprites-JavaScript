@@ -1,0 +1,466 @@
+﻿<!DOCTYPE html>
+  <html>            
+    <head>          
+      <meta charset="utf-8">    
+      <title>       
+       ninja
+      </title>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+      <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+      
+
+
+    </head>
+
+    <body id="page" style="background-color: #c1c1c1; overflow: hidden; margin: 0px" > 
+
+     <div id="cntDiv" style="height: 50px; color: red; width: 200px; position: absolute; top: 40px; left: 50px; font-size: 15pt">  </div>
+      
+ 	 <div id="house" style="background: url('dom2.png'); height: 312px; width: 400px; position: absolute; top: 288px; left: 2200px"></div>
+
+<div  id="holder1" style="width: 100%">
+
+      <div  id="holder2" style=" width: 100%" >
+        
+        <div class="fruit" id="div2" style="background: url('banans2.png') ;height: 35px;  width: 35px; position: absolute; top: 300px; left: 600px"></div>
+
+        <div class="fruit" id="div3" style="background: url('baclagan2.png') ;height: 35px; width: 35px; position: absolute; top: 370px; left: 800px"></div>
+
+        <div class="fruit" id="div4" style="background: url('banana2.png') ;height: 35px; width: 35px; position: absolute; top: 320px; left: 1900px"></div>
+
+        <div class="fruit" id="div5" style="background: url('pomidor2.png') ;height: 35px; width: 35px; position: absolute; top: 420px; left: 700px"></div>
+
+        <div class="fruit" id="div6" style="background: url('pomidor2.png') ;height: 35px; width: 35px; position: absolute; top: 520px; left: 1000px"></div>
+
+        <div class="fruit" id="div7" style="background: url('baclagan2.png') ;height: 35px; width: 35px; position: absolute; top: 470px; left: 1200px"></div>
+
+         <div class="fruit" id="div8" style="background: url('banans2.png') ;height: 35px; width: 35px; position: absolute; top: 420px; left: 1450px"></div>
+
+         <div class="fruit" id="div9" style="background: url('pomidor2.png') ;height: 35px; width: 35px; position: absolute; top: 500px; left: 1700px"></div>
+
+      </div>
+
+</div>
+
+
+
+<script type="text/javascript">
+
+
+       var cntDiv = document.getElementById("cntDiv");
+       var house  = document.getElementById("house");
+       var bgImg = new Image();
+       bgImg.src = "sprait6.png";
+
+       var bgImg = new Image();
+       bgImg.src = "sprait1.jpg";
+
+       var divTop = 460;
+       var flag=true;
+       var flag2=false;
+       var jump = false;
+       var pos=0;
+       var posHause = 2200
+       var cnt = 0;
+
+       var arrBlock  = document.getElementById('holder2').getElementsByClassName('fruit');
+
+        function Player()
+        {
+          this.div = document.createElement("div");
+          this.div.style.width = "120px";
+          this.div.style.height = "115px";
+          this.div.style.position = "absolute";
+          this.div.style.top = "460px";
+          this.div.style.left = "250px";
+          this.div.id = "div1";
+          this.div.style.background = "url(sprait6.png)";
+
+          this.position =0;
+          this.position2 =0;
+
+          //var _self = this;
+
+          this.timerId = null;
+          this.timerStop = null;
+          this.timerJamp = null;
+          this.div.style.backgroundPosition = "0px 0px"; 
+
+          return this;
+        }
+
+        Player.prototype  =
+        {
+
+          nextPosition : function ()
+          {
+            this.position++;
+            if(this.position >= 9) this.position = 0;
+            this.div.style.backgroundPosition = (-this.position * 120) + "px " + "-268px"; 
+          },
+
+            nextPositionStop : function ()
+          {
+              for (var i = 0; i < arrBlock.length; i++) 
+              {
+                 if(  arrBlock[i].getBoundingClientRect().top>blockPlayer.getBoundingClientRect().top && arrBlock[i].getBoundingClientRect().top < blockPlayer.getBoundingClientRect().bottom && arrBlock[i].getBoundingClientRect().left > blockPlayer.getBoundingClientRect().left && arrBlock[i].getBoundingClientRect().left < blockPlayer.getBoundingClientRect().right)
+                {
+                     cnt++;
+                     arrBlock[i].remove();
+                     cntDiv.innerHTML= "Набраные очки: " + cnt;
+                }
+              }
+            this.position++;
+            if(this.position >= 8) this.position = 0;
+            this.div.style.backgroundPosition = (-this.position * 120) + "px " + "0px"; 
+          },
+
+
+          nextPositionJamp : function ()
+          {
+             if(flag==true)
+              {
+                    if(this.timerJamp != null)
+                  {
+                  clearInterval(this.timerJamp);
+                  this.timerJamp = null;
+             
+                  var _self = this;
+                  this.timerStop = setInterval(function() { _self.nextPositionStop();}, 100);
+                  }
+              }
+          },
+
+          nextPositionLeft : function ()
+          {
+              this.position2--;
+              if(this.position2 >= 0) this.position2 = 9;
+              this.div.style.backgroundPosition = (-this.position2 * 120) + "px " + "-140px"; 
+          },
+
+          startJamp : function ()
+          {
+            clearInterval(this.timerStop);
+            this.timerStop = null;
+
+            clearInterval(this.timerId);
+              this.timerId = null;
+
+            if(this.timerJamp == null)
+            {
+              var _self = this;
+                this.timerJamp = setInterval(function() { _self.nextPositionJamp();}, 100);
+            }
+
+            if(this.timerId == null)
+            {
+              var _self = this;
+              this.timerId = setInterval(function() { _self.nextPosition();}, 100);
+
+              clearInterval(this.timerJamp);
+              this.timerJamp = null;
+            }
+
+            if(flag2==false)
+            {
+             clearInterval(this.timerId);
+              this.timerId = null; 
+
+              if(this.timerJamp == null)
+              {
+                var _self = this;
+                this.timerJamp = setInterval(function() { _self.nextPositionJamp();}, 100);
+              }
+            }
+
+          },
+
+          stopJamp : function ()
+          {
+            clearInterval(this.timerStop);
+            this.timerStop = null;
+
+          },
+
+          startRan : function ()
+          {
+
+            clearInterval(this.timerStop);
+            this.timerStop = null;
+
+            if(this.timerId == null)
+            {
+              var _self = this;
+              this.timerId = setInterval(function() { _self.nextPosition();}, 100);
+            }
+          },
+
+          stopRan : function ()
+          {
+            if(this.timerId != null)
+            {
+              clearInterval(this.timerId);
+              this.timerId = null;
+
+              var _self = this;
+              this.timerStop = setInterval(function() { _self.nextPositionStop();}, 100);
+            } 
+          },
+
+
+          startLeft : function ()
+          {
+
+            clearInterval(this.timerStop);
+            this.timerStop = null;
+
+            if(this.timerId == null)
+            {
+              var _self = this;
+              this.timerId = setInterval(function() { _self.nextPositionLeft();}, 100);
+            }
+          },
+
+          stopLeft : function ()
+          {
+            if(this.timerId != null)
+            {
+              clearInterval(this.timerId);
+              this.timerId = null;
+
+              var _self = this;
+              this.timerStop = setInterval(function() { _self.nextPositionStop();}, 100);
+            } 
+          },
+
+
+          getDomObject : function()
+          {
+            return this.div;
+          }
+        }
+
+        function BackgroundImage()
+        {
+          this.div = document.createElement("div");
+          this.div.style.width = "100%";
+          this.div.style.height = "700px";
+          this.div.style.background = "url(sprait1.jpg)";
+
+          this.position =0;
+
+          this.timerId = null;
+          this.div.style.backgroundPosition = "0px 0px"; 
+
+          return this;
+        }
+
+        BackgroundImage.prototype  =
+        {
+
+          nextPosition : function ()
+          {
+            this.position++;
+            if(this.position >= 58) this.position = 0;
+            this.div.style.backgroundPosition = (-this.position * 25) + "px " + "0px"; 
+
+            posHause -=25; 
+ 			house.style.left =  posHause + "px";
+
+            for (var i = 0; i < arrBlock.length; i++) 
+            {
+               	pos = arrBlock[i].getBoundingClientRect().left-25;
+                arrBlock[i].style.left =  pos + "px";
+               
+            }
+
+              for (var i = 0; i < arrBlock.length; i++) 
+              {
+
+                if(  arrBlock[i].getBoundingClientRect().top>blockPlayer.getBoundingClientRect().top && arrBlock[i].getBoundingClientRect().top < blockPlayer.getBoundingClientRect().bottom && arrBlock[i].getBoundingClientRect().left > blockPlayer.getBoundingClientRect().left && arrBlock[i].getBoundingClientRect().left < blockPlayer.getBoundingClientRect().right)
+                {
+                	//console.log("arrBlock[i].remove();");
+                     cnt++;
+                     arrBlock[i].remove();
+                     cntDiv.innerHTML= "Набраные очки: " + cnt;
+                }
+              }
+
+              if(blockPlayer.getBoundingClientRect().left > house.getBoundingClientRect().left && blockPlayer.getBoundingClientRect().left < house.getBoundingClientRect().right)
+              {
+
+		              	function playSound(url)
+		              	{
+						  var audio = document.createElement('audio');
+						  audio.style.display = "none";
+						  audio.src = url;
+						  audio.autoplay = true;
+						  audio.onended = function()
+						  {
+						    audio.remove() 
+						  };
+						  document.body.appendChild(audio);
+						}
+
+						playSound("2.mp3");
+              	
+              }
+          },
+
+          prefPosition : function ()
+          {
+            this.position--;
+            if(this.position >= 58) this.position = 0;
+            this.div.style.backgroundPosition = (-this.position * 25) + "px " + "0px";
+
+              posHause +=25; 
+ 			house.style.left =  posHause + "px";
+             
+             for (var i = 0; i < arrBlock.length; i++) 
+            {
+               pos = arrBlock[i].getBoundingClientRect().left+25;
+                arrBlock[i].style.left =  pos + "px";
+            }
+          },
+
+          start : function ()
+          {
+            if(this.timerId == null)
+            {
+              var _self = this;
+              this.timerId = setInterval(function() { _self.nextPosition();}, 100);
+            }
+          },
+
+          stop : function ()
+          {
+            if(this.timerId != null)
+            {
+              clearInterval(this.timerId);
+              this.timerId = null;
+            } 
+          },
+
+
+            prefStart : function ()
+          {
+            if(this.timerId == null)
+            {
+              var _self = this;
+              this.timerId = setInterval(function() { _self.prefPosition();}, 100);
+            }
+          },
+
+          prefStop : function ()
+          {
+            if(this.timerId != null)
+            {
+              clearInterval(this.timerId);
+              this.timerId = null;
+            } 
+          },
+
+          getDomObject : function()
+          {
+            return this.div;
+          }
+        }
+
+</script>
+
+<script type="text/javascript">
+      
+ 
+        var body = document.getElementById("page");
+        var block = document.getElementById("div2");
+
+        var player = new Player();
+        document.getElementById("holder2").appendChild(player.getDomObject());
+
+        var blockPlayer = player.getDomObject();
+        //console.log(blockPlayer);
+       
+		    var background = new BackgroundImage();
+        document.getElementById("holder1").appendChild(background.getDomObject());
+    
+
+  body.onkeydown = function ()
+    {
+      var keycode;
+      if(!event) var event = window.event;
+      if (event.keyCode) keycode = event.keyCode;
+      else if(event.which) keycode = event.which; 
+
+      if(keycode==39)
+      {
+        flag2=true;
+        background.start();
+        player.startRan();
+      }
+
+      if(keycode==38)
+      {
+
+        if(flag==true)
+          {
+            
+             flag=false;
+             jump = true;
+
+            $('#div1').animate({top: 250 }, {duration: 200});
+            $('#div1').animate({ top: 460 }, {duration: 300}, function()
+            {
+               console.log("difuydufh2222");
+                jump = false;
+            });
+
+          player.div.style.backgroundPosition = "0px " + "-380px";
+          player.startJamp();
+
+          }
+      }
+
+      if(keycode==37)
+      {
+        player.startLeft();
+        background.prefStart();
+      }
+    }
+
+
+      body.onkeyup = function()
+     {
+
+     	var keycode;
+      if(!event) var event = window.event;
+      if (event.keyCode) keycode = event.keyCode; 
+      else if(event.which) keycode = event.which; 
+      //alert("keycode: "+keycode);
+
+      if(keycode==39)
+      {
+        flag2=false;
+        player.stopRan();
+        background.stop();
+      }
+
+      if(keycode==38)
+      {
+
+       flag=true
+       player. stopJamp();
+      }
+
+      if(keycode==37)
+      {
+        player. stopLeft();
+        background.prefStop();
+      }
+
+     };
+      
+      </script> 
+      
+    </body> 
+  </html>
